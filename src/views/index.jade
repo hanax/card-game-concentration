@@ -26,12 +26,12 @@ html
         span#row-score
       .card__row
         span.fa.fa-hourglass-3
-        span#row-timer
-      .card__row
+        .row-timer
+      .card__row.hide-sm
         span.fa.fa-cog
         select#select__board-size
           each s in board_sizes
-            option(value= s selected= s===4)= 'Board Size: ' + s
+            option(value= s selected= s===6)= 'Board Size: ' + s
       .card__row.card__row--clickable#row-start
         span.fa.fa-play
     .card.board

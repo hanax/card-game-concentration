@@ -1,7 +1,6 @@
 // TODO: check browser for compatibility
 // TODO: give hint, random swap
 // TODO: add timer for initial flash
-// TODO: animations: score change
 
 import 'normalize-css';
 import '../styles/index.styl';

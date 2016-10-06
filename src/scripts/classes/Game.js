@@ -6,44 +6,63 @@ export default class Game {
     this.timer = null;
     this.score = 0;
     this.timeLeft = 0;
+    this.totTime = 0;
   }
 
   get timeLeft() {
-    return parseInt($('#row-timer').text(), 10);
+    return this._timeLeft;
+  }
+
+  set timeLeft(timeLeft) {
+    this._timeLeft = Math.min(this.totTime, timeLeft);
+    if (this.timeLeft === 0) {
+      this.timer = null;
+      this.end();
+    }
+
+    const $rowTimer = $('.row-timer')
+      .removeClass('animated-highlight')
+      .css('width', (this.timeLeft / this.totTime) * 100 + '%');
+    if (timeLeft <= 10 && this.timer) {
+      setTimeout(() => { $rowTimer.addClass("animated-highlight") }, 10);
+    }
   }
 
   get score() {
     return parseInt($('#row-score').text(), 10);
   }
 
-  set timeLeft(timeLeft) {
-    $('#row-timer')
-      .removeClass('text--highlight')
-      .text(timeLeft);
-    if (timeLeft === 0) {
-      this.timer = null;
+  set score(score) {
+    const prevScore = this.score;
+    const $rowScore = $('#row-score')
+      .removeClass('animated-up')
+      .text(score);
+    if (score > prevScore) {
+      setTimeout(() => { $rowScore.addClass("animated-up") }, 10);
     }
-    if (timeLeft <= 10 && this.timer) {
-      $('#row-timer').addClass('text--highlight');
-    }
-    if (timeLeft <= 0) {
-      this.end();
-    }
+
+    // Update top score
+    const topScore = Math.max(
+      this.score,
+      window.localStorage.getItem('concentrationTopScore') || 0
+    );
+    $('#row-top-score').text(topScore);
+    window.localStorage.setItem('concentrationTopScore', topScore);
   }
 
-  set score(score) {
-    $('#row-score').text(score);
+  get timer() {
+    return this._timer;
   }
 
   set timer(timer) {
-    if (timer === null && this._timer !== null) {
+    if (this._timer !== null) {
       clearInterval(this._timer);
     }
     this._timer = timer;
   }
 
   isTouched() {
-    return this._timer !== null;
+    return this.timer !== null;
   }
 
   end() {
@@ -53,10 +72,6 @@ export default class Game {
     const calScoreTimer = setInterval(() => {
       if (this.timeLeft <= 0) {
         clearInterval(calScoreTimer);
-        const topScore =
-          Math.max(this.score, window.localStorage.getItem('concentrationTopScore') || 0);
-        $('#row-top-score').text(topScore);
-        window.localStorage.setItem('concentrationTopScore', topScore);
       } else {
         this.score += 2;
         this.timeLeft --;
@@ -65,7 +80,8 @@ export default class Game {
   }
 
   start(boardSize) {
-    this.timeLeft = TIME_LEFT[boardSize];
+    this.totTime = TIME_LEFT[boardSize];
+    this.timeLeft = this.totTime;
     this.score = 0;
 
     this.timer = setInterval(() => {
@@ -75,7 +91,7 @@ export default class Game {
     this.renderBoard(boardSize);
   };
 
-  renderBoard(boardSize = 4) {
+  renderBoard(boardSize = 6) {
     const iconIndexes = generateIconIndexes(boardSize, TOTAL_ICON_PAIRS);
     const $board = $('.board').empty().show();
 
@@ -104,18 +120,17 @@ export default class Game {
               this.end();
             }
           }, 500);
+          this.timeLeft += 5;
           nextScore += 10;
         } else {
           nextScore -= 1;
         }
-        this.score = nextScore;
-        setTimeout(() => {
-          setCheckboxes($checked, {checked: false});
-        }, 500);
+        this.score = Math.max(0, nextScore);
+        setTimeout(() => { setCheckboxes($checked, {checked: false}); }, 500);
       }
     });
 
-    // flash the board at the beginning
+    // Show the board at the beginning
     setCheckboxes(getCheckboxes($board), {disabled: true});
     window.setTimeout(() => {
       setCheckboxes(getCheckboxes($board), {disabled: false});
