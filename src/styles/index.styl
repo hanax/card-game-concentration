@@ -1,0 +1,121 @@
+@import 'nib'
+@import './font-awesome.css'
+@import './font-cat-icons.css'
+
+align-left-margin = 50px
+shadow-light-gray = rgba(0,0,0,.1)
+disabled-dark-gray = rgba(0,0,0,.5)
+important-green = #5BDCAC
+important-red = #E34B4B
+
+*
+  box-sizing border-box
+
+body
+  font-size 14px
+  font-weight 300
+  font-family Avenir, 'Open Sans', Helvetica, sans-serif
+  color rgb(30,30,30)
+  background-color #efefef
+    
+p
+  margin 0
+
+a
+  text-decoration none
+  outline 0
+  color rgba(0,0,0,.4)
+  transition all .3s
+  cursor pointer
+  &, &:active, &:focus
+    outline none
+  &:hover
+    color #000
+
+ul
+  padding 0
+  margin 0
+  list-style-type none
+
+.card
+  float left
+  min-width 200px
+  margin 50px 0 0 align-left-margin
+  padding 10px 10px
+  border-radius 1px
+  background-color #fff
+  box-shadow 0 1px 0 shadow-light-gray
+
+.board
+  display none
+
+.card__row
+  display block
+  width 100%
+  height 60px
+  line-height 30px
+  padding 15px 15px
+  border-bottom 1px dashed shadow-light-gray
+  transition all .3s
+  &:last-of-type
+    border-bottom 0
+  .fa
+    min-width 15px
+    margin-right 15px
+
+.text--highlight
+  color important-red
+
+.card__row--clickable
+  font-size 30px
+  text-align center
+  color #fff
+  background-color important-green
+  cursor pointer
+  &:hover
+    box-shadow inset 0 -60px 0 shadow-light-gray
+  .fa
+    margin-right 0
+
+.board
+  position relative
+  overflow hidden
+  input[type="checkbox"]
+    display none
+
+.board__row
+  overflow hidden  
+  width 100%
+
+input[type=checkbox] + .board__column
+  text-align center
+  font-size 24px
+  width 50px
+  height 50px
+  line-height 50px
+  float left
+  cursor pointer
+  transition all .3s
+  .board__column-wrapper
+    transition transform .3s
+    transform scaleX(0)
+  &:hover
+    background-color shadow-light-gray
+
+input[type=checkbox]:checked + .board__column
+  .board__column-wrapper
+    transform scaleX(1)
+
+input[type=checkbox]:disabled + .board__column
+  cursor default
+  &:hover
+    background-color #fff
+  .board__column-wrapper
+    transform scaleX(1)
+    opacity 0.5
+
+.footer
+  font-size 12px
+  position absolute
+  bottom 15px
+  left align-left-margin

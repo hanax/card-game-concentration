@@ -1,0 +1,49 @@
+doctype html
+html
+  head
+    meta(charset='utf-8')
+    meta(name='viewport' content='width=device-width,initial-scale=1')
+
+    title Concentration
+
+    meta(name="description" content="Concentration game")
+    meta(name="keywords" content="concentration game")
+    meta(property="og:url" content="https://hanax.co/concentration")
+    meta(property="og:type" content="website")
+    meta(property="og:site_name" content="Concentration")
+    meta(property="og:title" content="Concentration game")
+    meta(property="og:description" content="Concentration game")
+    meta(property="og:image" content="assets/favicon.png")
+    meta(property="og:locale" content="en_US")
+
+    link(href='https://fonts.googleapis.com/css?family=Josefin+Sans:300', rel='stylesheet', type='text/css')
+    link(href='https://fonts.googleapis.com/css?family=Open+Sans:300,400', rel='stylesheet', type='text/css')
+
+    link(rel='shortcut icon' href='assets/favicon.png' type='image/png')
+
+    script(src='//code.jquery.com/jquery-2.1.4.min.js')
+    script(src='main.js')
+
+  body
+    .card
+      .card__row
+        span.fa.fa-trophy
+        span#row-top-score
+      .card__row
+        span.fa.fa-dashboard
+        span#row-score
+      .card__row
+        span.fa.fa-hourglass-3
+        span#row-timer
+      .card__row
+        span.fa.fa-cog
+        select#select__board-size
+          each s in board_sizes
+            option(value= s selected= s===4)= 'Board Size: ' + s
+      .card__row.card__row--clickable#row-start
+        span.fa.fa-play
+    .card.board
+    .footer
+      ul
+        each f in footers
+          li!= f
