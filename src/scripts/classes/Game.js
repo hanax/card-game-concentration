@@ -1,4 +1,4 @@
-import {generateIconIndexes, setCheckboxes} from '../utils/utils';
+import {generateIconIndexes, setCheckboxes, getCheckboxes} from '../utils/utils';
 import {TOTAL_ICON_PAIRS, INITIAL_FLASH_TIME, TIME_LEFT} from '../constants/constants';
 
 export default class Game {
@@ -66,63 +66,59 @@ export default class Game {
 
   start(boardSize) {
     this.timeLeft = TIME_LEFT[boardSize];
+    this.score = 0;
 
     this.timer = setInterval(() => {
       this.timeLeft --;
     }, 1000);
 
-    renderBoard(boardSize, this);
+    this.renderBoard(boardSize);
+  };
+
+  renderBoard(boardSize = 4) {
+    const iconIndexes = generateIconIndexes(boardSize, TOTAL_ICON_PAIRS);
+    const $board = $('.board').empty().show();
+
+    for (let i = 0; i < boardSize; i ++) {
+      const $row = $('<div class=\'board__row\'/>').appendTo($board);
+      for (let j = 0; j < boardSize; j ++) {
+        const idx = i * boardSize + j;
+        $row
+          .append(`<input type='checkbox' id='checkbox-${idx}' value='${iconIndexes[idx]}'>`)
+          .append(`<label class='board__column' for='checkbox-${idx}'>
+            <div class='board__column-wrapper'>
+              <span class='flaticon-animal-${iconIndexes[idx]}' />
+            </div>
+          </label>`);
+      }
+    }
+
+    getCheckboxes($board).change(() => {
+      let nextScore = this.score;
+      const $checked = getCheckboxes($board, 'checked');
+      if ($checked.length > 1) {
+        if ($checked[0].value === $checked[1].value) {
+          setTimeout(() => {
+            setCheckboxes($checked, {disabled: true});
+            if (getCheckboxes($board, 'disabled').length === boardSize * boardSize) {
+              this.end();
+            }
+          }, 500);
+          nextScore += 10;
+        } else {
+          nextScore -= 1;
+        }
+        this.score = nextScore;
+        setTimeout(() => {
+          setCheckboxes($checked, {checked: false});
+        }, 500);
+      }
+    });
+
+    // flash the board at the beginning
+    setCheckboxes(getCheckboxes($board), {disabled: true});
+    window.setTimeout(() => {
+      setCheckboxes(getCheckboxes($board), {disabled: false});
+    }, 1000 * INITIAL_FLASH_TIME[boardSize]);
   };
 }
-
-const renderBoard = (boardSize = 4, game) => {
-  const iconIndexes = generateIconIndexes(boardSize, TOTAL_ICON_PAIRS);
-  const $board = $('.board').empty().show();
-
-  for (let i = 0; i < boardSize; i ++) {
-    const $row = $('<div class=\'board__row\'/>')
-      .appendTo($board);
-
-    for (let j = 0; j < boardSize; j ++) {
-      const idx = i * boardSize + j;
-      $row
-        .append(`<input type='checkbox' id='checkbox-${idx}' value='${iconIndexes[idx]}'>`)
-        .append(`<label class='board__column' for='checkbox-${idx}'>
-          <div class='board__column-wrapper'>
-            <span class='flaticon-animal-${iconIndexes[idx]}' />
-          </div>
-        </label>`);
-
-      $(`#checkbox-${idx}`).change(() => {
-        let nextScore = game.score;
-        const $cur = $(`#checkbox-${idx}`);
-        const $checked = $('.board input:checked');
-        if ($checked.length > 1) {
-          const inputA = $checked[0];
-          const inputB = $checked[1];
-          if (inputA.value === inputB.value) {
-            setTimeout(() => {
-              setCheckboxes($([inputA, inputB]), {disabled: true});
-              if ($('.board input:disabled').length === boardSize * boardSize) {
-                game.end();
-              }
-            }, 500);
-            nextScore += 10;
-          } else {
-            nextScore -= 1;
-          }
-          game.score = nextScore;
-          setTimeout(() => {
-            setCheckboxes($([inputA, inputB]), {checked: false});
-          }, 500);
-        }
-      });
-    }
-  }
-
-  // flash the board at the beginning
-  setCheckboxes($(".board input"), {disabled: true});
-  window.setTimeout(() => {
-    setCheckboxes($(".board input"), {disabled: false});
-  }, 1000 * INITIAL_FLASH_TIME[boardSize]);
-};

@@ -28,3 +28,7 @@ export const setCheckboxes = (boxes, options) => {
     Object.assign(e, options)
   });
 };
+
+export const getCheckboxes = ($container, state = null) => {
+  return state ? $container.find(`input:${state}`) : $container.find('input');
+};
