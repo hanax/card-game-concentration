@@ -124,13 +124,13 @@ export default class Game {
     this.boardSize = boardSize;
     this.totTime = TIME_LEFT[boardSize];
     this.timeLeft = this.totTime;
+    this.hintsLeft = 0;
     this.score = 0;
 
+    this.renderBoard();
     this.timer = setInterval(() => {
       this.timeLeft --;
     }, 1000);
-
-    this.renderBoard();
   };
 
   renderBoard() {
@@ -157,7 +157,7 @@ export default class Game {
       const $checked = getInputs($board, 'checked');
       if ($checked.length === 2) {
         if ($checked[0].value === $checked[1].value) {
-          // Succeeded to pair
+          // Succeed to pair
           setTimeout(() => {
             setInputs($checked, {disabled: true});
             if (getInputs($board, 'disabled').length === this.boardSize * this.boardSize) {
@@ -167,7 +167,7 @@ export default class Game {
           this.timeLeft += 5;
           this.score += 10;
         } else {
-          // Failed to pair
+          // Fail to pair
           this.score -= 1;
         }
         setTimeout(() => { setInputs($checked, {checked: false}); }, 500);
