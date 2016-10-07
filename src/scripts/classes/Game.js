@@ -170,7 +170,7 @@ export default class Game {
           // Fail to pair
           this.score -= 1;
         }
-        setTimeout(() => { setInputs($checked, {checked: false}); }, 500);
+        setTimeout(() => { setInputs($checked, {checked: false}); }, 1000);
       }
     });
 
