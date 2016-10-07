@@ -23,12 +23,12 @@ export const generateIconIndexes = (size, totPair) => {
   return indexes;
 };
 
-export const setCheckboxes = (boxes, options) => {
-  boxes.each((i, e) => {
+export const setInputs = (inputs, options) => {
+  inputs.each((i, e) => {
     Object.assign(e, options)
   });
 };
 
-export const getCheckboxes = ($container, state = null) => {
+export const getInputs = ($container, state = null) => {
   return state ? $container.find(`input:${state}`) : $container.find('input');
 };

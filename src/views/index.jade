@@ -4,7 +4,7 @@ html
     meta(charset='utf-8')
     meta(name='viewport' content='width=device-width,initial-scale=1')
 
-    title Concentration
+    title Grumpy Cat Concentration
 
     meta(name="description" content="Concentration game")
     meta(name="keywords" content="concentration game")
@@ -26,14 +26,20 @@ html
         span#row-score
       .card__row
         span.fa.fa-hourglass-3
+        span#row-timer
         .row-timer
       .card__row.hide-sm
         span.fa.fa-cog
         select#select__board-size
           each s in board_sizes
             option(value= s selected= s===6)= 'Board Size: ' + s
-      .card__row.card__row--clickable#row-start
-        span.fa.fa-play
+      .card__row.card__row--filled
+        button.card__column#column-how
+          span.fa.fa-question
+        button.card__column#column-hint
+          span.fa.fa-lightbulb-o
+        button.card__column.card__column--wide#column-start
+          span.fa.fa-play
     .card.board
     .footer
       ul

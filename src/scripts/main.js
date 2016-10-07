@@ -1,7 +1,3 @@
-// TODO: check browser for compatibility
-// TODO: give hint, random swap
-// TODO: add timer for initial flash
-
 import 'normalize-css';
 import '../styles/index.styl';
 import Game from './classes/Game';
@@ -9,9 +5,9 @@ import Game from './classes/Game';
 $(() => {
   const game = new Game();
 
-  $('#row-start').on('click', () => {
+  $('#column-start').on('click', () => {
     try {
-      if (!game.isTouched()
+      if (!game.isPlaying()
         || window.confirm('Are you sure? All progress will not be saved.')
       ) {
         const boardSize = $('#select__board-size').val();
@@ -20,5 +16,13 @@ $(() => {
     } catch(e) {
       console.log(e);
     }
-  })
+  });
+
+  $('#column-how').on('click', () => {
+    window.alert('Concentration, also known as memory match or pairs, is a card game in which you lay all the card face down on a surface and on each turn flip over two at a time. The goal of the game is to find all matching pairs of cards.');
+  });
+
+  $('#column-hint').on('click', () => {
+    game.showHint();
+  });
 });

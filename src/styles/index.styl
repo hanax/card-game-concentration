@@ -18,7 +18,7 @@ body
   font-weight 300
   font-family Avenir, 'Open Sans', Helvetica, sans-serif
   color rgb(30,30,30)
-  background-color #efefef
+  background url('/assets/bg.png') fixed #efefef
     
 p
   margin 0
@@ -39,9 +39,14 @@ ul
   margin 0
   list-style-type none
 
+button
+  border none
+  &, &:active, &:focus
+    outline none
+
 .hide-sm
   @media screen and (max-width: 700px)
-    display none !important
+    display none
 
 .card
   float left
@@ -50,7 +55,7 @@ ul
   padding 10px 10px
   border-radius 1px
   background-color #fff
-  box-shadow 0 1px 0 shadow-light-gray
+  box-shadow 0 2px 1px shadow-light-gray
   @media screen and (max-width: 700px)
     width 100%
     margin 0 0 20px 0 
@@ -60,7 +65,6 @@ ul
 
 .card__row
   position relative
-  display block
   width 100%
   height 60px
   line-height 30px
@@ -68,7 +72,7 @@ ul
   border-bottom 1px dashed shadow-light-gray
   transition all .3s
   &:last-of-type
-    border-bottom 0
+    border-bottom none
   .fa
     min-width 15px
     margin-right 15px
@@ -79,13 +83,18 @@ ul
     border-radius 2px
   @media screen and (max-width: 700px)
     float left
-    width 25%
+    width 20%
     padding 5px
     line-height 50px
-    border-bottom 0
+    border-bottom none
     .fa
       min-width 0
       margin-right 5px
+
+.card__row--filled
+  padding 0
+  @media screen and (max-width: 700px)
+    width 40%
 
 .row-timer
   position absolute
@@ -97,14 +106,31 @@ ul
   background-color shadow-light-gray
   transition all .2s
 
-.card__row--clickable
+.card__column
+  float left
+  line-height 60px
+  width 25%
+  height 100%
+
+.card__column--wide
+  width 50%
+
+button.card__column
   font-size 30px
   text-align center
   color #fff
   background-color important-green
+  border 1px 1px solid important-green
+  box-shadow inset 0 -2px 0 shadow-light-gray
   cursor pointer
-  &:hover
+  transition all .2s
+  text-shadow 0 1px 0 shadow-light-gray
+  &:hover,
+  &:disabled
     box-shadow inset 0 -60px 0 shadow-light-gray
+  &:disabled
+    color shadow-light-gray
+    text-shadow none
   .fa
     margin-right 0
 

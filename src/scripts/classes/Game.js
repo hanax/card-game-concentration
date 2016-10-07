@@ -1,12 +1,30 @@
-import {generateIconIndexes, setCheckboxes, getCheckboxes} from '../utils/utils';
-import {TOTAL_ICON_PAIRS, INITIAL_FLASH_TIME, TIME_LEFT} from '../constants/constants';
+import {generateIconIndexes, setInputs, getInputs} from '../utils/utils';
+import {TOTAL_ICON_PAIRS, INITIAL_FLASH_TIME, TIME_LEFT, DEFAULT_BOARD_SIZE, N_HINT} from '../constants/constants';
 
 export default class Game {
   constructor() {
     this.timer = null;
     this.score = 0;
-    this.timeLeft = 0;
     this.totTime = 0;
+    this.timeLeft = 0;
+    this.boardSize = DEFAULT_BOARD_SIZE;
+    this.hintsLeft = 0;
+  }
+
+  get hintsLeft() {
+    return this._hintsLeft;
+  }
+
+  set hintsLeft(hintsLeft) {
+    this._hintsLeft = hintsLeft;
+    const $columnHint =
+      $('button#column-hint')
+      .css(
+        'boxShadow',
+        `inset 0 -${2 + 60 * (1 - this.hintsLeft / N_HINT[this.boardSize])}px 0 rgba(0,0,0,.1)`
+      );
+
+    setInputs($columnHint, {disabled: hintsLeft === 0});
   }
 
   get timeLeft() {
@@ -14,16 +32,25 @@ export default class Game {
   }
 
   set timeLeft(timeLeft) {
-    this._timeLeft = Math.min(this.totTime, timeLeft);
+    this._timeLeft = Math.max(0, Math.min(this.totTime, timeLeft));
+
     if (this.timeLeft === 0) {
-      this.timer = null;
       this.end();
+    }
+
+    const initialFlashTime = INITIAL_FLASH_TIME[this.boardSize] - this.totTime + this.timeLeft;
+    if (initialFlashTime > 0
+      && !this.isPlaying()
+    ) {
+      $('#row-timer').text(`Feel the cats! ${initialFlashTime}`);
+    } else {
+      $('#row-timer').text(this.timeLeft);
     }
 
     const $rowTimer = $('.row-timer')
       .removeClass('animated-highlight')
       .css('width', (this.timeLeft / this.totTime) * 100 + '%');
-    if (timeLeft <= 10 && this.timer) {
+    if (this.timeLeft <= 10 && this.timer) {
       setTimeout(() => { $rowTimer.addClass("animated-highlight") }, 10);
     }
   }
@@ -36,8 +63,8 @@ export default class Game {
     const prevScore = this.score;
     const $rowScore = $('#row-score')
       .removeClass('animated-up')
-      .text(score);
-    if (score > prevScore) {
+      .text(Math.max(0, score));
+    if (this.score > prevScore) {
       setTimeout(() => { $rowScore.addClass("animated-up") }, 10);
     }
 
@@ -61,16 +88,28 @@ export default class Game {
     this._timer = timer;
   }
 
-  isTouched() {
-    return this.timer !== null;
+  isPlaying() {
+    return this.timer !== null
+      && getInputs($('.board'), 'disabled').length !== this.boardSize * this.boardSize;
+  }
+
+  showHint() {
+    this.hintsLeft --;
+
+    const $enabled = getInputs($('.board'), 'enabled');
+    const enabledValues = $.makeArray($enabled.map((i, obj) => obj.value));
+    const possiblePair = [$enabled[0], $enabled[enabledValues.lastIndexOf(enabledValues[0])]];
+
+    setInputs($(possiblePair), {disabled: true});
   }
 
   end() {
-    setCheckboxes($(".board input"), {disabled: true});
+    setInputs($(".board input"), {disabled: true});
+    this.timer = null;
 
     // Add the time left as bonus score
     const calScoreTimer = setInterval(() => {
-      if (this.timeLeft <= 0) {
+      if (this.timeLeft === 0) {
         clearInterval(calScoreTimer);
       } else {
         this.score += 2;
@@ -80,6 +119,7 @@ export default class Game {
   }
 
   start(boardSize) {
+    this.boardSize = boardSize;
     this.totTime = TIME_LEFT[boardSize];
     this.timeLeft = this.totTime;
     this.score = 0;
@@ -88,52 +128,53 @@ export default class Game {
       this.timeLeft --;
     }, 1000);
 
-    this.renderBoard(boardSize);
+    this.renderBoard();
   };
 
-  renderBoard(boardSize = 6) {
-    const iconIndexes = generateIconIndexes(boardSize, TOTAL_ICON_PAIRS);
+  renderBoard() {
+    const iconIndexes = generateIconIndexes(this.boardSize, TOTAL_ICON_PAIRS);
     const $board = $('.board').empty().show();
 
-    for (let i = 0; i < boardSize; i ++) {
+    for (let i = 0; i < this.boardSize; i ++) {
       const $row = $('<div class=\'board__row\'/>').appendTo($board);
-      for (let j = 0; j < boardSize; j ++) {
-        const idx = i * boardSize + j;
+      for (let j = 0; j < this.boardSize; j ++) {
+        const idx = i * this.boardSize + j;
         $row
           .append(`<input type='checkbox' id='checkbox-${idx}' value='${iconIndexes[idx]}'>`)
-          .append(`<label class='board__column' for='checkbox-${idx}'>
-            <div class='board__column-wrapper'>
-              <span class='flaticon-animal-${iconIndexes[idx]}' />
-            </div>
-          </label>`);
+          .append(`
+            <label class='board__column' for='checkbox-${idx}'>
+              <div class='board__column-wrapper'>
+                <span class='flaticon-animal-${iconIndexes[idx]}' />
+              </div>
+            </label>
+          `);
       }
     }
 
-    getCheckboxes($board).change(() => {
-      let nextScore = this.score;
-      const $checked = getCheckboxes($board, 'checked');
-      if ($checked.length > 1) {
+    getInputs($board).change(() => {
+      const $checked = getInputs($board, 'checked');
+      if ($checked.length === 2) {
         if ($checked[0].value === $checked[1].value) {
           setTimeout(() => {
-            setCheckboxes($checked, {disabled: true});
-            if (getCheckboxes($board, 'disabled').length === boardSize * boardSize) {
+            setInputs($checked, {disabled: true});
+            if (getInputs($board, 'disabled').length === this.boardSize * this.boardSize) {
               this.end();
             }
           }, 500);
           this.timeLeft += 5;
-          nextScore += 10;
+          this.score += 10;
         } else {
-          nextScore -= 1;
+          this.score -= 1;
         }
-        this.score = Math.max(0, nextScore);
-        setTimeout(() => { setCheckboxes($checked, {checked: false}); }, 500);
+        setTimeout(() => { setInputs($checked, {checked: false}); }, 500);
       }
     });
 
     // Show the board at the beginning
-    setCheckboxes(getCheckboxes($board), {disabled: true});
+    setInputs(getInputs($board), {disabled: true});
     window.setTimeout(() => {
-      setCheckboxes(getCheckboxes($board), {disabled: false});
-    }, 1000 * INITIAL_FLASH_TIME[boardSize]);
+      setInputs(getInputs($board), {disabled: false});
+      this.hintsLeft = N_HINT[this.boardSize];
+    }, 1000 * INITIAL_FLASH_TIME[this.boardSize]);
   };
 }

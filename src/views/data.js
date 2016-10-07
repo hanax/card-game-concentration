@@ -1,7 +1,7 @@
 var marked = require('marked');
 
 var footers = [
-  marked('Icons credits: [Font Awesome](http://fontawesome.io/), [flaticon](http://www.flaticon.com)'),
+  marked('Credits: [Font Awesome](http://fontawesome.io/), [flaticon](http://www.flaticon.com), [Subtle Patterns](http://http://subtlepatterns.com/)'),
   marked('Made with <span class = \'fa fa-heart\'></span> by [Hannah](http://hanax.co)')
 ];
 

@@ -15,3 +15,13 @@ export const TIME_LEFT = {
   8: 360,
   10: 1000,
 };
+
+export const N_HINT = {
+  2: 1,
+  4: 3,
+  6: 4,
+  8: 5,
+  10: 8,
+};
+
+export const DEFAULT_BOARD_SIZE = 6;
