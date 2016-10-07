@@ -51,7 +51,7 @@ export default class Game {
       .removeClass('animated-highlight')
       .css('width', (this.timeLeft / this.totTime) * 100 + '%');
     if (this.timeLeft <= 10 && this.timer) {
-      setTimeout(() => { $rowTimer.addClass("animated-highlight") }, 10);
+      setTimeout(() => { $rowTimer.addClass('animated-highlight') }, 10);
     }
   }
 
@@ -66,7 +66,7 @@ export default class Game {
       .removeClass('animated-up')
       .text(Math.max(0, score));
     if (this.score > prevScore) {
-      setTimeout(() => { $rowScore.addClass("animated-up") }, 10);
+      setTimeout(() => { $rowScore.addClass('animated-up') }, 10);
     }
 
     // Update top score board
