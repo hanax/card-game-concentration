@@ -1,5 +1,5 @@
 ## Concentration
-To play the game, visit http://hanax.co/board-game-concentration
+To play the game, visit http://hanax.co/card-game-concentration
 
 ### Browsers
 Should support most popular browsers. Works on mobile with only 6*6 board size.
@@ -8,8 +8,8 @@ Should support most popular browsers. Works on mobile with only 6*6 board size.
 
 ```shell
 # clone project
-git clone https://github.com/hanax/board-game-concentration.git
-cd board-game-concentration
+git clone https://github.com/hanax/card-game-concentration.git
+cd card-game-concentration
 # compile
 gulp
 # bundled source file should be in /dist
