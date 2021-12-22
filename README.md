@@ -1,5 +1,5 @@
 ## Concentration
-To play the game, visit http://hanax.co/card-game-concentration
+To play the game, visit https://hanax.github.io/card-game-concentration
 
 ### Browsers
 Should support most popular browsers. Works on mobile with only 6*6 board size.
